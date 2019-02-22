@@ -1,0 +1,26 @@
+version: 2
+
+jobs:
+  test:
+    docker:
+      - image: circleci/clojure:lein-2.8.1
+
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - orchard-deps-{{ checksum "project.clj" }}
+
+      - run: lein test
+      - save_cache:
+          paths:
+            - ~/.m2/repository
+            - ~/.lein
+
+          key: orchard-deps-{{ checksum "project.clj" }}
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test
